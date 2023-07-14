@@ -40,9 +40,9 @@ Benchmark gas costs for:
 
 ### Deploy Benchmark (Sepolia)
 
-| Language      | Contract Address                            | Deploy  | setValue() | ownerSetTime() |
-| ------------- | ------------------------------------------  | ------- | ---------- | -------------- |
-| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 274,181 | ???        | ???            |
+| Language      | Contract Address                            | Contract Size (bytes)| Deploy (gas) | setValue() (gas) | ownerSetTime() (gas) |
+| ------------- | ------------------------------------------  | -------------------- | -----------  | ---------------- | -------------------- |
+| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 1,840                | 274,181      | 27,424           | 29,212               |
 
 Gas Used
 https://sepolia.etherscan.io/tx/0x091892a46f80bbd73ec9ca74b759d9125deb32d9d64cb14d23eb679b2e142846
