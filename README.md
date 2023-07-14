@@ -40,31 +40,28 @@ Benchmark gas costs for:
     -otherwise, write block.timestamp to storage slot 0
 ```
 
-### Deploy Address and Contract Size Benchmark (Sepolia)
+### Deploy Address and Contract Size Benchmark
 
-| Language      | Contract Address                            | Contract Size (bytes)| 
+| Language      | Contract Address (Sepolia)                  | Contract Size (bytes)| 
 | ------------- | ------------------------------------------  | -------------------- | 
-| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 402                  | 
-| Huff          | 0x117Efd397E4258DE7440A5c009A346fC1D27faBB  | 1,840                | 
+| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 1,840                | 
+| Huff          | 0x117Efd397E4258DE7440A5c009A346fC1D27faBB  | 402                  | 
 | Yul           | 0xc56Db440f6B91315cAbFd684fCA4Ae2D8edaF1ec  | 1,340                |
 | Vyper         | 0x35754005ff357007b52b109452754ec24193462e  | 864                  |
 | Fe            | 0xbf1Ce7005951e92B0A23cB3ed6F4BfA897631FEA  | 850                  |
-| LLL           | ?                                           | ?                    |
+| LLL           | 0x550Be0D12A15BF6131438f144D588211910c0cAB  | 464                  |
 
 ### Function Gas Benchmark 
 
 
-| Language      | constructor() | setValue() | ownerSetTime() |
-| ------------- | ------------- | ---------- | -------------- |
-| Solidity      | 274,181       | 27,424     | 29,212         |
-| Huff          | 140,214       | 27,065     | 29,051         |
-| Yul           | 233,512       | 27,432     | 29,062         |
-| Vyper         | 182,690       | 27,411     | 29,385         |
-| Fe            | 190,265       | 27,653     | 29,545         |
-| LLL           | ?             | ?          | ?              |
-
-Gas Used
-https://sepolia.etherscan.io/tx/0x091892a46f80bbd73ec9ca74b759d9125deb32d9d64cb14d23eb679b2e142846
+| Language      | constructor() | setValue(uint256) | ownerSetTime() |
+| ------------- | ------------- | ----------------- | -------------- |
+| Solidity      | 274,181       | 27,424            | 29,212         |
+| Huff          | 140,214       | 27,065            | 29,051         |
+| Yul           | 233,512       | 27,432            | 29,062         |
+| Vyper         | 182,690       | 27,411            | 29,385         |
+| Fe            | 190,265       | 27,653            | 29,545         |
+| LLL           | 147,285       | 44,275 ??         | 29,123         |
 
 ## Applications
 
