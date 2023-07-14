@@ -1,0 +1,168 @@
+// SPDX-License-Identifier: MIT
+// Comiled output bytecode with: huffc test.huff -a -b -v
+#define function getValue() nonpayable returns (uint256)
+#define function getOwner() nonpayable returns (address)
+#define function setValue(uint256) nonpayable returns ()
+#define function ownerSetTime() nonpayable returns ()
+
+// Event
+#define event valueUpdated()
+
+// Storage
+#define constant VALUE = FREE_STORAGE_POINTER()
+#define constant OWNER = FREE_STORAGE_POINTER()
+
+//Constants
+// #define constant OWNER = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 // Anvil address.
+
+// External function macros
+
+// setValue(uint256)
+#define macro SET_VALUE() = takes(0) returns(0) {
+
+    // Program counter test:
+    // https://www.evm.codes/playground
+    // Mnemonic opcodes:
+    // PUSH1 0x01 // "PUSH1 0x00" does not jump and stops the program counter before going to next opcode JUMPDEST to keep execution paths isolated.
+    // PUSH1 0x0b // Program counter value.
+    // JUMPI      // Jump to JUMPDEST at program counter value 0x0b if conditional value is not 0x00.
+    // PUSH1 0x01 // Path not jumping.
+    // PUSH1 0x00 
+    // SSTORE     // slot0 = 1.
+    // STOP       // Stop program counter before going forward.
+    // JUMPDEST   // Program counter
+    // PUSH1 0x05 // Path when you jump.
+    // PUSH1 0x00 
+    // SSTORE     // slot0 = 5
+
+    //Get calldata which has a 4 byte offset (first 4 bytes are the function signature hash)
+    0x04                             // [0x04]
+    calldataload                     // [valueCalldata]
+
+    //Copy the calldata value in case we need it to update storage (will be consumed once by eq with owner address), then check if we have the same value in storage already [if so, revert].
+    dup1                             // [valueCalldata,valueCalldata]    
+    [VALUE]                          // [value_ptr,valueCalldata,valueCalldata]
+    sload                            // [value,valueCalldata,valueCalldata]
+    eq                               // [value==valueCalldata,valueCalldata]
+    errorSameValue                   // [errorSameValueJumpDestination,value==valueCalldata,valueCalldata]
+    jumpi                            // [valueCalldata] //Jump to errorSameValue if calldata and storage are equal.
+
+    //Path calldata does not match storage. Record calldata in storage then emit an event. 
+    [VALUE]                         // [value_ptr,valueCalldata]
+    sstore                          // []
+    __EVENT_HASH(valueUpdated)      // [sig]
+    0x00 0x00                       // [memoryOffset,memoryLength,eventSig]
+    log1                            // []  // log0 does not use eventSig. Use log1 to activate the eventSig. log2 to log4 activate more indexed topics. memoryOffset and memoryLength are used for other event arguments. 
+    stop                            // Stop the program counter before it countinues to the revert path.
+
+    //Jump here if calldata is the same as storage to revert.
+    errorSameValue:
+        0x00 0x00 revert
+
+}
+
+// ownerSetTime()
+#define macro OWNER_SET_TIME() = takes(0) returns(0) {
+
+    //See if msg.sender (caller) equals the owner address. If so, jump over revert and record block.timestamp in storage.
+    caller                           // [msg.sender]
+    [OWNER]                          // [owner_ptr,msg.sender]
+    sload                            // [owner,msg.sender]
+    eq                               // [owner==msg.sender]
+    ownerIsCaller                    // [ownerIsCallerJumpDestination,owner==msg.sender]
+    jumpi                            // [] //Jump to ownerIsCaller if owner is the caller.
+
+    //Revert since msg.sender is not the owner. 
+    0x00 0x00 revert                 // If the caller is not equal to the owner, revert.
+
+    //Record block.timestamp then emit an event. 
+    ownerIsCaller:
+        timestamp                  // [block.timestamp]
+        [VALUE]                    // [value_ptr,block.timestamp]
+        sstore                     // []
+        __EVENT_HASH(valueUpdated) // [sig]
+        0x00 0x00                  // [memoryOffset,memoryLength,eventSig]
+        log1                       // []  //log0 does not use eventSig. Use log1 to activate the eventSig. log2 to log4 activate more indexed topics. memoryOffset and memoryLength are used for other event arguments. 
+        stop                       // Stop program counter from going back to main which has revert logic at the end. 
+
+}
+
+// getValue()
+#define macro GET_VALUE() = takes(0) returns(0) {
+    // Read uint256 from storage
+    [VALUE]         // [value_ptr]
+    sload           // [value]
+
+    // Store the return value in memory
+    0x00            // [0x00, value]
+    mstore          // []
+
+    // Return the first 32 bytes of memory containing our uint256
+    0x20            // [0x20]
+    0x00            // [0x00, 0x20]
+    return          // []
+}
+
+// getOwner()
+#define macro GET_OWNER() = takes(0) returns(0) {
+    // Read uint256 from storage
+    [OWNER]         // [value_ptr]
+    sload           // [value]
+
+    // Store the return value in memory
+    0x00            // [0x00, value]
+    mstore          // []
+
+    // Return the first 32 bytes of memory containing our uint256
+    0x14            // size (20 bytes)
+    0x0c            // offset (12 bytes)
+    return          // []
+}
+
+#define macro CONSTRUCTOR() = takes(0) returns(0) {
+    timestamp             // [block.timestamp]
+    [VALUE]               // [owner_ptr,block.timestamp]
+    sstore                // []
+    caller                // [msg.sender]
+    [OWNER]               // [owner_ptr,msg.sender]
+    sstore                // []
+
+    // Experiment: add immutable variable in raw bytecode instead of storage: https://ethereum.stackexchange.com/questions/132944/solidity-immutable-equivalent-in-huff
+
+    // Load uint256 value into memory. 
+    // 0xabcffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdef // [testUint256]
+    // 0x00            // [0x00, testUint256]
+    // mstore          // []
+
+    // Write memory value to contract bytecode. 
+    // 0x20               // uint256 is 32 bytes, represents size of data
+    // dup1 codesize sub  // offset of data in bytecode
+    // 0x00               // offset in memory
+    // codecopy           // copy the data
+
+    //426000557fabcffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdef600052602080380360003960448060393d393df360003560e01c8063552410771461001c5780632096525514610033575b600435806000541461002d57600055005b60006000fd5b60005460005260206000f360006000fd
+
+}
+
+// Main
+#define macro MAIN() = takes(0) returns(0) {
+    // Get the function selector
+    0x00 calldataload 0xe0 shr
+
+    dup1 __FUNC_SIG(setValue) eq setValue jumpi // Compare function selector to setValue(uint256)
+    dup1 __FUNC_SIG(getValue) eq getValue jumpi // Compare the function selector to getValue()
+    dup1 __FUNC_SIG(getOwner) eq getOwner jumpi // Compare the function selector to getValue()
+    dup1 __FUNC_SIG(ownerSetTime) eq ownerSetTime jumpi // Compare the function selector to getValue()
+
+    // dispatch
+    setValue:
+        SET_VALUE()
+    getValue:
+        GET_VALUE()
+    getOwner:
+        GET_OWNER()
+    ownerSetTime:
+        OWNER_SET_TIME()
+
+    0x00 0x00 revert
+}
