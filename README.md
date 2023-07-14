@@ -21,7 +21,9 @@ LLL
 -Fe is a high level EVM language developed by the Ethereum Foundation with Rust syntax
 -Huff is a low level gas optimized language developed by Aztec Protocol for interacting with the EVM stack 
 ```
-## Test
+## Benchmark 
+
+### Setup
 
 Benchmark gas costs for:
 
@@ -38,24 +40,21 @@ Benchmark gas costs for:
     -otherwise, write block.timestamp to storage slot 0
 ```
 
-### Deploy Benchmark (Sepolia)
+### Deploy Address and Contract Size Benchmark (Sepolia)
 
-| Language      | Contract Address                            | Contract Size (bytes)| Deploy (gas) | setValue() (gas) | ownerSetTime() (gas) |
-| ------------- | ------------------------------------------  | -------------------- | -----------  | ---------------- | -------------------- |
-| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 1,840                | 274,181      | 27,424           | 29,212               |
+| Language      | Contract Address                            | Contract Size (bytes)| 
+| ------------- | ------------------------------------------  | -------------------- | 
+| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 1,840                | 
+
+### Function Gas Benchmark 
+
+
+| Language      | constructor() | setValue() | ownerSetTime() |
+| ------------- | ------------- | ---------- | -------------- |
+| Solidity      | 274,181       | 27,424     | 29,212         |
 
 Gas Used
 https://sepolia.etherscan.io/tx/0x091892a46f80bbd73ec9ca74b759d9125deb32d9d64cb14d23eb679b2e142846
-
-WIP
-
-### Deploy Benchmark
-
-WIP
-
-### Deploy Benchmark
-
-WIP
 
 ## Applications
 
