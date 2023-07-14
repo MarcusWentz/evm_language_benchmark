@@ -47,6 +47,7 @@ Benchmark gas costs for:
 | Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 402                  | 
 | Huff          | 0x117Efd397E4258DE7440A5c009A346fC1D27faBB  | 1,840                | 
 | Yul           | 0xc56Db440f6B91315cAbFd684fCA4Ae2D8edaF1ec  | 1,340                |
+| Vyper         | 0x35754005ff357007b52b109452754ec24193462e  | 864                  |
 
 ### Function Gas Benchmark 
 
@@ -56,6 +57,7 @@ Benchmark gas costs for:
 | Solidity      | 274,181       | 27,424     | 29,212         |
 | Huff          | 140,214       | 27,065     | 29,051         |
 | Yul           | 233,512       | 27,432     | 29,062         |
+| Vyper         | 182,690       | 27,411     | 29,385         |
 
 Gas Used
 https://sepolia.etherscan.io/tx/0x091892a46f80bbd73ec9ca74b759d9125deb32d9d64cb14d23eb679b2e142846
