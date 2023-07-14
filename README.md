@@ -38,7 +38,14 @@ Benchmark gas costs for:
     -otherwise, write block.timestamp to storage slot 0
 ```
 
-### Deploy Benchmark
+### Deploy Benchmark (Sepolia)
+
+| Language      | Contract Address                            | Deploy  | setValue() | ownerSetTime() |
+| ------------- | ------------------------------------------  | ------- | ---------- | -------------- |
+| Solidity      | 0xfc711c294001bbc94eea0d096435b3b259ba3801  | 274,181 | ???        | ???            |
+
+Gas Used
+https://sepolia.etherscan.io/tx/0x091892a46f80bbd73ec9ca74b759d9125deb32d9d64cb14d23eb679b2e142846
 
 WIP
 
